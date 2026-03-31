@@ -40,5 +40,14 @@ class Reserva(models.Model):
     horario = models.ForeignKey(Horario, on_delete=models.CASCADE)
     fecha = models.DateField()
 
+    def clean(self):
+        existe = Reserva.objects.filter(
+            horario=self.horario,
+            fecha=self.fecha
+        ).exclude(id=self.id).exists()
+
+        if existe:
+            raise ValidationError("Este horario ya está reservado")
+
     def __str__(self):
         return f"{self.usuario} - {self.fecha}"
